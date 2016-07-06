@@ -1,0 +1,77 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'ostruct'
+require_relative '../lib/selfie'
+
+SELFIE_DEFAULTS = {
+  region:                { default_value: 'us-west-2',  short_option: '-r', long_option: '--region REGION',                   usage: 'AWS Region (default: us-west-2)' },
+  target_account:        { default_value: nil,          short_option: '-a', long_option: '--target-account ACCOUNT',          usage: 'Target AWS account to snapshot, without dashes' },
+  target_role:           { default_value: 'human/dso/TGT-dso-IncidentResponse', short_option: '-R', long_option: '--target-role ROLE', usage: 'Incident response target account role name' },
+  target_instance_list:  { default_value: nil,          short_option: '-n', long_option: '--target-instance-list INSTANCEID', type: 'Array', usage: 'Comma-separated list of instances to snapshot' },
+  forensic_account:      { default_value: nil,          short_option: '-i', long_option: '--ir ACCOUNT',                      usage: 'The incident response (IR) account to copy snapshots into' },
+  control_account:       { default_value: nil,          short_option: '-A', long_option: '--control-account ACCOUNT',         usage: 'The control plane account number' },
+  control_role:          { default_value: 'dso/ctrl/my-app/CTL-my-app-IncidentResponse', short_option: '-c', long_option: '--control-role ROLE', usage: 'Incident response control account role name' },
+  username:              { default_value: nil,          short_option: '-u', long_option: '--username USERNAME',               usage: 'Your IAM username, used to grab MFA serial number' },
+  ticket_id:             { default_value: nil,          short_option: '-t', long_option: '--ticket-id TICKETID',              usage: 'The ticket ID, will be added to snapshot description' },
+  file_path_resume:      { default_value: false,        short_option: '-f', long_option: '--file-path FILEPATH',              usage: 'The file path to load and resume from' },
+  profile:               { default_value: 'dso',        short_option: '-p', long_option: '--profile-name NAME',               usage: 'The AWS credentials profile name' },
+  bucket:                { default_value: nil,          short_option: '-b', long_option: '--bucket BUCKET',                   usage: 'The bucket in incident response account for saving security configuration' }
+}
+
+# S
+class SelfieOpts
+  # sets the default options for selflie CLI
+  def self.defaults(result)
+    OptionParser.new do |opts|
+      opts.banner = "Usage: #{File.basename($0)} [options]"
+      SELFIE_DEFAULTS.each do |option_key, default_values_hash|
+        result[option_key] = default_values_hash[:default_value]
+        opts.on(*default_values_hash.values_at(:short_option, :long_option, :usage).compact) do |opt_val|
+          case default_values_hash[:type]
+          when 'Array'
+            result[option_key] = opt_val.split(',')
+          when 'Float'
+            result[option_key] = opt_val.to_f
+          else
+            result[option_key] = opt_val
+          end
+        end
+      end
+    end
+  end
+
+  # parses the arguments
+  def self.parse(args)
+    options = {}
+    parser = defaults(options)
+
+    parser.on_tail('-h', '--help', 'Show this message') do
+      puts parser
+      exit
+    end
+
+    parser.on_tail('--version', 'Show version') do
+      puts ::Version.join('.')
+      exit
+    end
+
+    begin
+      parser.parse!(args)
+    rescue Exception => e
+      $stderr.puts "#{e.message}\n"
+    end
+    return options, parser
+  end
+end
+
+begin
+  options, parser = SelfieOpts.parse(ARGV)
+  if ARGV.empty?
+    puts parser.help
+  else
+    Selfie.new(options).snap
+  end
+rescue => e
+  parser.help
+  raise e
+end
