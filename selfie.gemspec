@@ -13,6 +13,6 @@ Gem::Specification.new do |s|
   s.files   = `git ls-files -z`.split("\x0")
   s.require_paths = %w(lib)
   s.homepage = 'https://github.com/devsecops/selfie'
-  s.license = 'Apache License 2.0'
+  s.license = 'Apache-2.0'
   s.add_runtime_dependency 'aws-sdk', '~> 2.1'
 end
