@@ -2,6 +2,7 @@ require 'aws-sdk'
 require 'assumer'
 require_relative 'loggable'
 
+VERSION = '1.0.0'
 # Takes a snapshot of an instance in AWS
 class Selfie
   include Loggable

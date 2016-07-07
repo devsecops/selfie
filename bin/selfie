@@ -47,12 +47,10 @@ class SelfieOpts
 
     parser.on_tail('-h', '--help', 'Show this message') do
       puts parser
-      exit
     end
 
     parser.on_tail('--version', 'Show version') do
-      puts ::Version.join('.')
-      exit
+      puts ::VERSION
     end
 
     begin
@@ -65,7 +63,8 @@ class SelfieOpts
 end
 
 begin
-  options, parser = SelfieOpts.parse(ARGV)
+  options, parser = SelfieOpts.parse(ARGV.clone)
+  exit if ARGV.include?('-v') || ARGV.include?('--version') || ARGV.include?('-h') || ARGV.include?('--help')
   if ARGV.empty?
     puts parser.help
   else
