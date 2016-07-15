@@ -1,8 +1,6 @@
-require_relative 'lib/selfie'
-
 Gem::Specification.new do |s|
   s.name    = 'selfie'
-  s.version = ::VERSION
+  s.version = '1.0.0'
   s.date    = Time.now.utc.strftime('%Y-%m-%d')
   s.summary = 'Let me take a selfie, a snapshot of an AWS instance'
   s.bindir  = 'bin'
