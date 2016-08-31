@@ -12,5 +12,5 @@ Gem::Specification.new do |s|
   s.require_paths = %w(lib)
   s.homepage = 'https://github.com/devsecops/selfie'
   s.license = 'Apache-2.0'
-  s.add_runtime_dependency 'aws-sdk', '~> 2.1'
+  s.add_runtime_dependency 'assumer'
 end
