@@ -1,15 +1,19 @@
-#Selfie#
-Part of the [DevSecOps Toolkit](https://github.com/devsecops)
+#Selfie
 
-##Overview##
+Selfie (part of the [DevSecOps Toolkit](https://github.com/devsecops)) is a simple tool that takes snapshots of instances in an AWS account and copies these to another account, e.g., the incident response account. Selfie implements the DevSecOps control plane pattern for AWS to access target and IR accounts, see [https://github.com/devsecops/controlplane](https://github.com/devsecops/controlplane).
+
+"Hey, let's investigate what's going on in this instance, but first let me take a selfie..."
+
+## Overview
+
 Selfie takes snapshots of AWS instances.
 
 Snapshotting Support:
+
 1. EC2 Instances and associated EBS Volumes
 
-##Requirements##
-1. Must have dependencies installed
-  * gem install aws-sdk
+## Requirements
+1. Must have dependencies installed: `bundle install`
 2. The Account being snapshotted must have the Incident Responder role (This role can only be pushed by an IAM Admin) 'arn:aws:iam::010101010101:role/human/dso/TGT-dso-IncidentResponse'.
 3. Your IAM user must be able to assume-role against that role
 
